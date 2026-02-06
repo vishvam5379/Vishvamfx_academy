@@ -11,8 +11,13 @@ const DB_FILE = path.join(__dirname, 'database.json');
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(__dirname)); // Serve landing page and other assets
-app.use('/videos', express.static(path.join(__dirname, 'videos'))); // Serve local video files
+app.use(express.static(__dirname)); // Serve assets
+app.use('/videos', express.static(path.join(__dirname, 'videos')));
+
+// Explicit route for landing page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Initialize Database
 if (!fs.existsSync(DB_FILE)) {
