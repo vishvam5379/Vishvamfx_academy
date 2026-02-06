@@ -1,0 +1,95 @@
+{
+  "modules": [
+    {
+      "id": 1,
+      "title": "Module 1: Forex Foundations",
+      "status": "completed",
+      "lessons": [
+        {
+          "id": 101,
+          "title": "What is Forex?",
+          "duration": "10:00",
+          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU"
+        },
+        {
+          "id": 102,
+          "title": "Pips, Lots & Leverage",
+          "duration": "15:30",
+          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU"
+        },
+        {
+          "id": 103,
+          "title": "Setting up MT5",
+          "duration": "12:15",
+          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Module 2: Technical Analysis",
+      "status": "active",
+      "lessons": [
+        {
+          "id": 201,
+          "title": "Trendlines & Market Structure",
+          "duration": "20:00",
+          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU"
+        },
+        {
+          "id": 202,
+          "title": "Candlestick Patterns Mastery",
+          "duration": "25:45",
+          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU"
+        },
+        {
+          "id": 203,
+          "title": "Support & Demand Zones",
+          "duration": "18:20",
+          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Module 3: Institutional Concepts",
+      "status": "locked",
+      "lessons": [
+        {
+          "id": 301,
+          "title": "Liquidity Grabs",
+          "duration": "30:00",
+          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU"
+        },
+        {
+          "id": 302,
+          "title": "Order Blocks Explained",
+          "duration": "22:15",
+          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Module 4: Advanced Live Training",
+      "status": "active",
+      "type": "live",
+      "lessons": [
+        {
+          "id": 401,
+          "title": "Live Market Execution (Join Now)",
+          "duration": "LIVE",
+          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU",
+          "isLive": true
+        },
+        {
+          "id": 402,
+          "title": "Live Q&A Session",
+          "duration": "LIVE",
+          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU",
+          "isLive": true
+        }
+      ]
+    }
+  ]
+}

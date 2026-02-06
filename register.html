@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - VishvamFx</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific Login Page Overrides */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+            /* Light corporate bg */
+            background-image: none;
+            /* Override default bg */
+        }
+
+        .login-card {
+            background: #fff;
+            padding: 50px;
+            border-radius: 12px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+            /* Softer shadow */
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .login-header {
+            margin-bottom: 30px;
+        }
+
+        .login-header i {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .login-header h2 {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+        }
+
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .form-group input {
+            background: #f9f9f9;
+        }
+
+        .forgot-link {
+            display: block;
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        .back-link {
+            margin-top: 25px;
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .back-link:hover {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+        <div class="login-header">
+            <i class="fa-solid fa-layer-group"></i>
+            <h2>Student Portal</h2>
+            <p>Welcome back to VishvamFx</p>
+        </div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="student@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+
+            <a href="#" class="forgot-link">Forgot Password?</a>
+
+            <button type="submit" class="submit-btn login-btn">Secure Login</button>
+        </form>
+
+        <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const originalText = btn.innerText;
+
+            btn.innerText = 'Verifying...';
+
+            try {
+                // Attempt to connect to backend
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    window.location.href = result.redirect || 'student_dashboard.html';
+                } else {
+                    alert('Login failed: ' + result.message);
+                    btn.innerText = originalText;
+                }
+            } catch (error) {
+                console.warn('Backend invalid. Using demo bypass.', error);
+
+                // Fallback: Simulate success if backend is down but fields are filled
+                if (email && password) {
+                    setTimeout(() => {
+                        window.location.href = 'student_dashboard.html';
+                    }, 1000);
+                } else {
+                    btn.innerText = originalText;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

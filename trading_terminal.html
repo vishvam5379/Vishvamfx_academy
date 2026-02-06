@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProTrade IN - Advanced Trading Terminal</title>
+    <link rel="stylesheet" href="terminal.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h1 class="logo-text">ProTrade <span class="highlight">IN</span></h1>
+            </div>
+            <nav class="top-nav">
+                <a href="#" class="nav-item active">File</a>
+                <a href="#" class="nav-item">View</a>
+                <a href="#" class="nav-item">Insert</a>
+                <a href="#" class="nav-item">Charts</a>
+                <a href="#" class="nav-item">Tools</a>
+                <a href="#" class="nav-item">Window</a>
+                <a href="#" class="nav-item">Help</a>
+            </nav>
+            <div class="header-tools">
+                <button class="tool-btn" title="New Order"><i class="fa-regular fa-file-lines"></i> New Order</button>
+                <div class="server-status">
+                    <span class="status-dot"></span> Live: Mumbai-DC1
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <div class="main-workspace">
+            <!-- Sidebar: Market Watch -->
+            <aside class="sidebar" id="market-watch">
+                <div class="panel-header">
+                    <span>Market Watch</span>
+                    <div class="panel-controls">
+                        <i class="fa-solid fa-filter"></i>
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </div>
+                </div>
+                <div class="market-tabs">
+                    <button class="tab-btn active">Symbols</button>
+                    <button class="tab-btn">Details</button>
+                    <button class="tab-btn">Trading</button>
+                </div>
+                <div class="market-list-header">
+                    <span class="col-symbol">Symbol</span>
+                    <span class="col-bid">Bid</span>
+                    <span class="col-ask">Ask</span>
+                </div>
+                <div class="market-list" id="market-list-container">
+                    <!-- Javascript will populate this -->
+                </div>
+            </aside>
+
+            <!-- Center: Charts -->
+            <main class="chart-area">
+                <div class="chart-toolbar">
+                    <div class="timeframes">
+                        <button>M1</button>
+                        <button>M5</button>
+                        <button>M15</button>
+                        <button>M30</button>
+                        <button class="active">H1</button>
+                        <button>H4</button>
+                        <button>D1</button>
+                        <button>W1</button>
+                        <button>MN</button>
+                    </div>
+                    <div class="chart-tools">
+                        <button><i class="fa-solid fa-crosshairs"></i></button>
+                        <button><i class="fa-solid fa-chart-column"></i></button>
+                        <button><i class="fa-solid fa-chart-line"></i></button>
+                        <button><i class="fa-solid fa-draw-polygon"></i></button>
+                    </div>
+                </div>
+                <div class="chart-container" id="chart-view">
+                    <!-- Placeholder for Chart Implementation (Simulated UI) -->
+                    <div class="chart-watermark">RELIANCE H1</div>
+                    <div class="chart-grid">
+                        <!-- Chart visual simulation created via CSS/JS -->
+                        <div class="price-line current-price">
+                            <span class="price-label">2,456.80</span>
+                        </div>
+                    </div>
+                    <div class="quick-trade-panel">
+                        <div class="qt-header">RELIANCE</div>
+                        <div class="qt-buttons">
+                            <button class="qt-btn sell">
+                                <span class="qt-label">SELL</span>
+                                <span class="qt-price">2,456.75</span>
+                            </button>
+                            <div class="qt-input">
+                                <input type="number" value="1.00" step="0.1">
+                            </div>
+                            <button class="qt-btn buy">
+                                <span class="qt-label">BUY</span>
+                                <span class="qt-price">2,456.85</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Bottom Panel: Toolbox -->
+        <section class="bottom-panel">
+            <div class="panel-header-tabs">
+                <button class="panel-tab active" data-target="trade">Trade</button>
+                <button class="panel-tab" data-target="exposure">Exposure</button>
+                <button class="panel-tab" data-target="history">History</button>
+                <button class="panel-tab" data-target="news">News</button>
+                <button class="panel-tab" data-target="mailbox">Mailbox</button>
+                <button class="panel-tab" data-target="calendar">Calendar</button>
+            </div>
+            <div class="panel-content" id="panel-content">
+                <!-- Javascript will populate this -->
+            </div>
+        </section>
+
+        <!-- Status Bar -->
+        <footer class="status-bar">
+            <div class="status-left">
+                <span>For Help, press F1</span>
+            </div>
+            <div class="status-right">
+                <span class="connection-status">
+                    <i class="fa-solid fa-signal"></i> 12.45 ms
+                </span>
+                <span>0/0 kb</span>
+            </div>
+        </footer>
+    </div>
+    <script src="terminal.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,309 @@
+/* register.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Space+Grotesk:wght@300;500;700&display=swap');
+
+:root {
+    --primary: #ffaa00;
+    /* Amber Gold */
+    --secondary: #9d00ff;
+    /* Electric Violet */
+    --tertiary: #00ffcc;
+    /* Cyan Pop */
+    --bg-color: #030305;
+    --glass-bg: rgba(10, 10, 15, 0.4);
+    --glass-border: rgba(255, 170, 0, 0.15);
+    --text-main: #ffffff;
+    --text-dim: #8b8b9e;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#canvas-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.container {
+    position: relative;
+    z-index: 10;
+    perspective: 1200px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.register-card {
+    background: var(--glass-bg);
+    width: 450px;
+    padding: 40px;
+    border-radius: 24px;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 170, 0, 0.05);
+    transform-style: preserve-3d;
+    animation: floating 8s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes floating {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotateX(0deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotateX(1deg);
+    }
+}
+
+/* Glow Border Animation */
+.register-card::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(45deg, transparent 40%, var(--primary), transparent 60%);
+    z-index: -1;
+    animation: borderRun 4s linear infinite;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    padding: 1px;
+    border-radius: 24px;
+    opacity: 0.5;
+}
+
+@keyframes borderRun {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 200% 50%;
+    }
+
+    /* Simplified for gradient move */
+}
+
+/* Header */
+.header {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 36px;
+    background: linear-gradient(90deg, #fff, var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.header p {
+    color: var(--text-dim);
+    font-size: 14px;
+}
+
+/* Form Elements */
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px;
+    color: var(--text-main);
+    font-size: 15px;
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Outfit', sans-serif;
+}
+
+.input-group select {
+    appearance: none;
+    cursor: pointer;
+}
+
+.input-group select option {
+    background: #1a1a1a;
+    color: white;
+}
+
+.input-group label {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    pointer-events: none;
+    transition: 0.3s ease all;
+    background-color: transparent;
+    padding: 0 4px;
+    font-size: 14px;
+}
+
+/* Floating Label Logic */
+.input-group input:focus,
+.input-group input:not(:placeholder-shown),
+.input-group select:focus,
+.input-group select:valid {
+    border-color: var(--primary);
+    background: rgba(255, 170, 0, 0.05);
+    box-shadow: 0 0 20px rgba(255, 170, 0, 0.1);
+}
+
+.input-group input:focus~label,
+.input-group input:not(:placeholder-shown)~label,
+.input-group select:focus~label,
+.input-group select:valid~label {
+    top: 0;
+    transform: translateY(-50%) scale(0.85);
+    color: var(--primary);
+    background-color: var(--bg-color);
+    /* Mask visual line */
+    font-weight: 600;
+}
+
+/* Custom Select Arrow */
+.input-group.select-wrapper::after {
+    content: '▼';
+    font-size: 10px;
+    color: var(--primary);
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Radio / Choices for Subject */
+.choice-label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    margin-left: 5px;
+}
+
+.subject-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.radio-box {
+    position: relative;
+    cursor: pointer;
+}
+
+.radio-box input {
+    display: none;
+}
+
+.radio-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    transition: all 0.3s;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dim);
+}
+
+.radio-box input:checked+.radio-content {
+    background: linear-gradient(135deg, var(--primary), #ff8800);
+    border-color: var(--primary);
+    color: #000;
+    font-weight: 700;
+    box-shadow: 0 5px 15px rgba(255, 170, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.radio-box:hover .radio-content {
+    border-color: var(--text-dim);
+}
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    height: 56px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    border: 1px solid var(--secondary);
+    color: var(--secondary);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+    border-radius: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    z-index: 2;
+}
+
+.btn-submit:hover {
+    background: var(--secondary);
+    color: #fff;
+    box-shadow: 0 0 30px rgba(157, 0, 255, 0.4);
+    transform: scale(1.02);
+}
+
+/* Footer */
+.footer-link {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 14px;
+    color: var(--text-dim);
+}
+
+.footer-link a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 5px;
+    transition: color 0.3s;
+}
+
+.footer-link a:hover {
+    color: #fff;
+    text-shadow: 0 0 10px var(--primary);
+}
