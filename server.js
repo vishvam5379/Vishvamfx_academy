@@ -150,6 +150,41 @@ app.get('/api/courses', (req, res) => {
     }
 });
 
+// 5. Admin Panel Data
+app.post('/api/admin/data', (req, res) => {
+    const { adminPassword } = req.body;
+
+    // Secret password for your admin panel (You can change this)
+    const SECRET_PASSWORD = process.env.ADMIN_PASSWORD || 'vishvamfx123';
+
+    if (adminPassword !== SECRET_PASSWORD) {
+        return res.status(403).json({ message: 'Unauthorized access.' });
+    }
+
+    const db = readDB();
+    res.json(db);
+});
+
+// 6. Delete User (Admin only)
+app.post('/api/admin/delete', (req, res) => {
+    const { adminPassword, email, type } = req.body;
+    const SECRET_PASSWORD = process.env.ADMIN_PASSWORD || 'vishvamfx123';
+
+    if (adminPassword !== SECRET_PASSWORD) {
+        return res.status(403).json({ message: 'Unauthorized access.' });
+    }
+
+    const db = readDB();
+    if (type === 'enrollment') {
+        db.enrollments = db.enrollments.filter(e => e.email !== email);
+    } else {
+        db.registrations = db.registrations.filter(r => r.email !== email);
+    }
+
+    writeDB(db);
+    res.json({ message: 'User deleted successfully.' });
+});
+
 // Start Server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
