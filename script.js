@@ -24,21 +24,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Form Handling (Index Page) ---
-    const enrollForm = document.querySelector('.enroll-form');
+    const enrollForm = document.getElementById('enrollment-form');
     if (enrollForm) {
         enrollForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const nameInput = enrollForm.querySelector('input[type="text"]');
-            const emailInput = enrollForm.querySelector('input[type="email"]');
-            const courseSelect = enrollForm.querySelector('select');
-            const btn = enrollForm.querySelector('button');
+            const nameInput = document.getElementById('enroll-name');
+            const emailInput = document.getElementById('enroll-email');
+            const passwordInput = document.getElementById('enroll-password');
+            const courseSelect = document.getElementById('enroll-course-select');
+            const selectedOption = courseSelect.options[courseSelect.selectedIndex];
+            const price = selectedOption.getAttribute('data-price');
+            const btn = document.getElementById('enroll-submit-btn');
             const originalText = btn.innerText;
 
             const formData = {
                 fullName: nameInput.value,
                 email: emailInput.value,
-                course: courseSelect.value
+                password: passwordInput.value,
+                course: courseSelect.value,
+                price: price
             };
 
             btn.innerText = 'Processing...';
@@ -50,23 +55,40 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify(formData)
                 });
 
-                const result = await response.json();
-
                 if (response.ok) {
-                    alert('Success! ' + result.message);
-                    enrollForm.reset();
-                    // Optional redirect
-                    // window.location.href = 'register.html';
+                    // Redirect to payment if price > 0
+                    if (parseInt(price) > 0) {
+                        const params = new URLSearchParams({
+                            name: formData.fullName,
+                            email: formData.email,
+                            course: formData.course,
+                            price: price
+                        });
+                        window.location.href = `payment.html?${params.toString()}`;
+                    } else {
+                        alert('Enrollment successful for Forex Basics (Free Content). Redirecting to dashboard...');
+                        window.location.href = 'student_dashboard.html';
+                    }
                 } else {
+                    const result = await response.json();
                     alert('Error: ' + result.message);
                 }
             } catch (error) {
-                console.warn('Backend server unreachable. Using mock response for demo.', error);
-                // Simulate success for demo purposes if backend is missing
-                setTimeout(() => {
-                    alert('Success! (Demo Mode: Backend unreachable, but form validated)');
-                    enrollForm.reset();
-                }, 1000);
+                console.warn('Backend server unreachable. Using local flow for demo.', error);
+
+                // Demo flow: redirect to payment anyway
+                if (parseInt(price) > 0) {
+                    const params = new URLSearchParams({
+                        name: formData.fullName,
+                        email: formData.email,
+                        course: formData.course,
+                        price: price
+                    });
+                    window.location.href = `payment.html?${params.toString()}`;
+                } else {
+                    alert('Enrollment successful! Redirecting to dashboard...');
+                    window.location.href = 'student_dashboard.html';
+                }
             } finally {
                 btn.innerText = originalText;
             }

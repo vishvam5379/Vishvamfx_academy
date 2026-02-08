@@ -115,9 +115,9 @@
                                     <i class="fa-solid fa-chart-candlestick"></i>
                                 </div>
                                 <div class="lesson-info">
-                                    <h4>Module 3: Support & Demand</h4>
-                                    <p>Lesson 4: identifying Order Blocks</p>
-                                    <button class="btn-sm">Resume</button>
+                                    <h4 id="continue-module">Module 1: Foundations</h4>
+                                    <p id="continue-lesson">Lesson 1: What is Forex?</p>
+                                    <button class="btn-sm" id="continue-resume-btn">Resume</button>
                                 </div>
                             </div>
                         </div>
@@ -146,7 +146,12 @@
                         </div>
                         <div class="video-info"
                             style="margin-top: 15px; padding: 20px; background: white; border-radius: 12px; border: 1px solid #ddd;">
-                            <h3 id="video-title">Select a Lesson</h3>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3 id="video-title">Select a Lesson</h3>
+                                <button id="mark-complete-btn" class="cta-btn primary"
+                                    style="display:none; padding: 8px 15px; font-size: 0.8rem;">Mark as
+                                    Completed</button>
+                            </div>
                             <p id="video-desc" style="color: #666; font-size: 0.9rem;">Click on any lesson below to
                                 start watching.</p>
                         </div>
@@ -196,6 +201,60 @@
                                     <span class="q-tag">Strategy</span>
                                 </li>
                             </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- SETTINGS VIEW -->
+                <div id="view-settings" class="view-section">
+                    <div class="settings-container card">
+                        <div style="padding: 20px;">
+                            <h3><i class="fa-solid fa-user-gear"></i> Profile Settings</h3>
+                            <p style="color: #666; margin-bottom: 25px;">Manage your account details and security.</p>
+
+                            <form id="settings-form" class="settings-form">
+                                <div class="form-grid"
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left;">
+                                    <div class="form-group">
+                                        <label
+                                            style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Full
+                                            Name</label>
+                                        <input type="text" id="settings-name" placeholder="Full Name" required
+                                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #fdfdfd;">
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Email
+                                            Address</label>
+                                        <input type="email" id="settings-email" placeholder="Email Address" required
+                                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #fdfdfd;">
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">New
+                                            Password</label>
+                                        <input type="password" id="settings-password"
+                                            placeholder="Leave blank to keep current"
+                                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #fdfdfd;">
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Confirm
+                                            Password</label>
+                                        <input type="password" id="settings-confirm-password"
+                                            placeholder="Confirm new password"
+                                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #fdfdfd;">
+                                    </div>
+                                </div>
+
+                                <div style="margin-top: 30px; display: flex; gap: 15px;">
+                                    <button type="submit" class="submit-btn"
+                                        style="padding: 12px 25px; font-size: 0.9rem; border-radius: 8px; border:none; background: var(--accent-color); color: white; cursor: pointer;">Save
+                                        Changes</button>
+                                    <button type="reset" class="outline-btn"
+                                        style="padding: 12px 25px; font-size: 0.9rem; border-radius: 8px; border: 1px solid #ddd; background: transparent; cursor: pointer;">Reset
+                                        Changes</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

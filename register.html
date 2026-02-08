@@ -109,43 +109,95 @@
 <body>
 
     <div class="login-card">
-        <div class="login-header">
-            <i class="fa-solid fa-layer-group"></i>
-            <h2>Student Portal</h2>
-            <p>Welcome back to VishvamFx</p>
+        <div id="auth-container">
+            <!-- Login Form (Default) -->
+            <div id="login-form-box">
+                <div class="login-header">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <h2>Student Portal</h2>
+                    <p>Welcome back to VishvamFx</p>
+                </div>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" placeholder="student@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="••••••••" required>
+                    </div>
+                    <a href="#" class="forgot-link">Forgot Password?</a>
+                    <button type="submit" class="submit-btn login-btn">Secure Login</button>
+                    <p style="margin-top:20px; font-size: 0.9rem;">New student? <a href="#"
+                            onclick="toggleAuth(event, 'register')"
+                            style="color:var(--accent-color); font-weight:bold;">Create an account</a></p>
+                </form>
+            </div>
+
+            <!-- Registration Form (Hidden by default) -->
+            <div id="register-form-box" style="display:none;">
+                <div class="login-header">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <h2>Join Academy</h2>
+                    <p>Start your trading journey today</p>
+                </div>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="reg-name">Full Name</label>
+                        <input type="text" id="reg-name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">Email Address</label>
+                        <input type="email" id="reg-email" placeholder="student@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Create Password</label>
+                        <input type="password" id="reg-password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="submit-btn login-btn">Register Now</button>
+                    <p style="margin-top:20px; font-size: 0.9rem;">Already have an account? <a href="#"
+                            onclick="toggleAuth(event, 'login')"
+                            style="color:var(--accent-color); font-weight:bold;">Login here</a></p>
+                </form>
+            </div>
         </div>
-
-        <form id="login-form">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" placeholder="student@example.com" required>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="••••••••" required>
-            </div>
-
-            <a href="#" class="forgot-link">Forgot Password?</a>
-
-            <button type="submit" class="submit-btn login-btn">Secure Login</button>
-        </form>
 
         <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
     </div>
 
     <script>
+        function toggleAuth(e, mode) {
+            e.preventDefault();
+            const loginBox = document.getElementById('login-form-box');
+            const registerBox = document.getElementById('register-form-box');
+            if (mode === 'register') {
+                loginBox.style.display = 'none';
+                registerBox.style.display = 'block';
+            } else {
+                loginBox.style.display = 'block';
+                registerBox.style.display = 'none';
+            }
+        }
+
+        // Helper for Mock DB (LocalStorage fallback)
+        function getMockDB() {
+            return JSON.parse(localStorage.getItem('mock_db') || '{"users":[]}');
+        }
+        function saveMockDB(db) {
+            localStorage.setItem('mock_db', JSON.stringify(db));
+        }
+
+        // Login Handler
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = e.target.querySelector('button');
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
             const originalText = btn.innerText;
 
             btn.innerText = 'Verifying...';
 
             try {
-                // Attempt to connect to backend
                 const response = await fetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -155,22 +207,83 @@
                 const result = await response.json();
 
                 if (response.ok) {
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        fullName: result.user.fullName,
+                        email: result.user.email
+                    }));
                     window.location.href = result.redirect || 'student_dashboard.html';
                 } else {
                     alert('Login failed: ' + result.message);
                     btn.innerText = originalText;
                 }
             } catch (error) {
-                console.warn('Backend invalid. Using demo bypass.', error);
+                console.warn('Backend unreachable, checking LocalStorage fallback...', error);
 
-                // Fallback: Simulate success if backend is down but fields are filled
-                if (email && password) {
-                    setTimeout(() => {
+                const db = getMockDB();
+                const user = db.users.find(u => u.email === email);
+
+                if (user) {
+                    if (user.password === password) {
+                        localStorage.setItem('currentUser', JSON.stringify({
+                            fullName: user.fullName,
+                            email: user.email
+                        }));
                         window.location.href = 'student_dashboard.html';
-                    }, 1000);
+                    } else {
+                        alert('Login failed: Incorrect password (Local DB)');
+                    }
                 } else {
-                    btn.innerText = originalText;
+                    alert('Login failed: User not found. Please register first.');
                 }
+                btn.innerText = originalText;
+            }
+        });
+
+        // Register Handler
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const fullName = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const originalText = btn.innerText;
+
+            btn.innerText = 'Creating account...';
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fullName, email, password, gender: 'Not specified', subject: 'All' })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Registration Successful! You can now login.');
+                    document.getElementById('login-email').value = email;
+                    document.getElementById('login-form-box').style.display = 'block';
+                    document.getElementById('register-form-box').style.display = 'none';
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                console.warn('Backend unreachable, saving to LocalStorage fallback...', error);
+
+                const db = getMockDB();
+                if (db.users.find(u => u.email === email)) {
+                    alert('Error: Email already registered in local browser.');
+                } else {
+                    db.users.push({ fullName, email, password });
+                    saveMockDB(db);
+                    alert('Registration Successful (Saved to Browser)! You can now login.');
+
+                    document.getElementById('login-email').value = email;
+                    document.getElementById('login-form-box').style.display = 'block';
+                    document.getElementById('register-form-box').style.display = 'none';
+                }
+            } finally {
+                btn.innerText = originalText;
             }
         });
     </script>

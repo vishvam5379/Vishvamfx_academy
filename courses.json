@@ -9,13 +9,13 @@
           "id": 101,
           "title": "What is Forex?",
           "duration": "10:00",
-          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU"
+          "videoUrl": "videos/v1.mp4"
         },
         {
           "id": 102,
           "title": "Pips, Lots & Leverage",
           "duration": "15:30",
-          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU"
+          "videoUrl": "videos/v2.mp4"
         },
         {
           "id": 103,
@@ -53,19 +53,14 @@
     {
       "id": 3,
       "title": "Module 3: Institutional Concepts",
-      "status": "locked",
+      "status": "active",
       "lessons": [
         {
           "id": 301,
-          "title": "Liquidity Grabs",
-          "duration": "30:00",
-          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU"
-        },
-        {
-          "id": 302,
-          "title": "Order Blocks Explained",
-          "duration": "22:15",
-          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU"
+          "title": "Live Practice Session",
+          "duration": "LIVE",
+          "videoUrl": "https://www.youtube.com/embed/PhXW6T7M6wU",
+          "isLive": true
         }
       ]
     },

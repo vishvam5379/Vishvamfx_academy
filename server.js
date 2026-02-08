@@ -38,48 +38,62 @@ const writeDB = (data) => {
 
 // 1. Enrollment (Landing Page)
 app.post('/api/enroll', (req, res) => {
-    const { fullName, email, course } = req.body;
+    const { fullName, email, password, course, price } = req.body;
 
-    if (!fullName || !email || !course) {
+    if (!fullName || !email || !password || !course) {
         return res.status(400).json({ message: 'All fields are required.' });
     }
 
     const db = readDB();
+
+    // Optional: Check if already enrolled
+    const existing = db.enrollments.find(e => e.email === email);
+    if (existing) {
+        return res.status(400).json({ message: 'Email already enrolled. Please login.' });
+    }
+
     const newEnrollment = {
-        id: Date.now(), // Simple ID
+        id: Date.now(),
         type: 'enrollment',
         fullName,
         email,
+        password, // In a real app, hash this!
         course,
+        price,
         date: new Date().toISOString()
     };
 
     db.enrollments.push(newEnrollment);
     writeDB(db);
 
-    console.log(`[ENROLL] New enrollment: ${fullName} for ${course}`);
-    res.json({ message: 'Enrollment received successfully!' });
+    console.log(`[ENROLL] New enrollment: ${fullName} for ${course} (Amount: ${price})`);
+    res.json({ message: 'Enrollment received successfully! You can now login.' });
 });
 
 // 2. Registration (Detailed Form)
 app.post('/api/register', (req, res) => {
-    const { fullName, email, gender, subject } = req.body;
+    const { fullName, email, password, gender, subject } = req.body;
 
-    if (!fullName || !email || !gender || !subject) {
-        return res.status(400).json({ message: 'All fields are required.' });
+    if (!fullName || !email || !password) {
+        return res.status(400).json({ message: 'Name, Email and Password are required.' });
     }
 
     const db = readDB();
 
-    // Check if valid user (optional logic)
+    // Check if already exists in registrations OR enrollments
+    const existing = db.registrations.find(u => u.email === email) || db.enrollments.find(e => e.email === email);
+    if (existing) {
+        return res.status(400).json({ message: 'Email already registered. Please login.' });
+    }
 
     const newRegistration = {
         id: Date.now(),
         type: 'registration',
         fullName,
         email,
-        gender,
-        subject,
+        password,
+        gender: gender || 'Not specified',
+        subject: subject || 'All',
         date: new Date().toISOString()
     };
 
@@ -94,21 +108,35 @@ app.post('/api/register', (req, res) => {
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
 
-    // For demo purposes, we accept any login if fields are filled
-    // In a real app, you would check the password against a hashed value in the DB
     if (!email || !password) {
         return res.status(400).json({ message: 'Email and Password required.' });
     }
 
-    // Optional: Check if email exists in registrations
     const db = readDB();
-    const userExists = db.registrations.find(u => u.email === email);
 
-    // We'll allow login even if not strictly found for this demo, 
-    // or you can enforce: if (!userExists) return res.status(401).json({message: 'User not found'});
+    // Search in both collections
+    let user = db.enrollments.find(u => u.email === email);
+    if (!user) {
+        user = db.registrations.find(u => u.email === email);
+    }
+
+    if (!user) {
+        console.log(`[LOGIN FAILED] User not found: ${email}`);
+        return res.status(401).json({ message: 'User not found. Please enroll first.' });
+    }
+
+    // Verify Password
+    if (user.password !== password) {
+        console.log(`[LOGIN FAILED] Incorrect password for: ${email}`);
+        return res.status(401).json({ message: 'Incorrect password.' });
+    }
 
     console.log(`[LOGIN] User logged in: ${email}`);
-    res.json({ message: 'Login successful', redirect: 'student_dashboard.html' });
+    res.json({
+        message: 'Login successful',
+        redirect: 'student_dashboard.html',
+        user: { fullName: user.fullName, email: user.email }
+    });
 });
 
 // 4. Get Course Content

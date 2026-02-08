@@ -1,5 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- USER SESSION HANDLING ---
+    const userProfile = JSON.parse(localStorage.getItem('currentUser'));
+    if (userProfile) {
+        // Update Sidebar Info
+        const sidebarName = document.querySelector('.user-profile-summary .name');
+        const sidebarAvatar = document.querySelector('.user-profile-summary .avatar-circle');
+
+        if (sidebarName) sidebarName.innerText = userProfile.fullName;
+        if (sidebarAvatar) {
+            const initials = userProfile.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+            sidebarAvatar.innerText = initials;
+        }
+    } else {
+        // Optional: Redirect to login if no user found
+        // window.location.href = 'register.html';
+    }
+
     // --- TAB NAVIGATION ---
     const navBtns = document.querySelectorAll('.nav-btn[data-tab]');
     const sections = document.querySelectorAll('.view-section');
@@ -25,6 +42,68 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- SETTINGS FORM HANDLING ---
+    const settingsForm = document.getElementById('settings-form');
+    if (settingsForm && userProfile) {
+        const nameInput = document.getElementById('settings-name');
+        const emailInput = document.getElementById('settings-email');
+        const passInput = document.getElementById('settings-password');
+        const confirmPassInput = document.getElementById('settings-confirm-password');
+
+        // Pre-fill form
+        nameInput.value = userProfile.fullName;
+        emailInput.value = userProfile.email;
+
+        settingsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validation
+            if (passInput.value && passInput.value !== confirmPassInput.value) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            const updatedData = {
+                fullName: nameInput.value,
+                email: emailInput.value,
+                password: passInput.value || undefined
+            };
+
+            const btn = settingsForm.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerText = 'Saving...';
+
+            try {
+                // In a real app, you would send a PATCH/POST request to the backend
+                // For this demo, we'll update localStorage and show success
+                localStorage.setItem('currentUser', JSON.stringify({
+                    ...userProfile,
+                    fullName: updatedData.fullName,
+                    email: updatedData.email
+                }));
+
+                setTimeout(() => {
+                    alert('Profile updated successfully!');
+                    btn.innerText = originalText;
+                    // Refresh sidebar
+                    const sidebarName = document.querySelector('.user-profile-summary .name');
+                    const sidebarAvatar = document.querySelector('.user-profile-summary .avatar-circle');
+                    if (sidebarName) sidebarName.innerText = updatedData.fullName;
+                    if (sidebarAvatar) {
+                        const initials = updatedData.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+                        sidebarAvatar.innerText = initials;
+                    }
+                    passInput.value = '';
+                    confirmPassInput.value = '';
+                }, 800);
+
+            } catch (error) {
+                alert('An error occurred while saving.');
+                btn.innerText = originalText;
+            }
+        });
+    }
+
     // --- LOAD COURSES DYNAMICALLY ---
     const coursesContainer = document.getElementById('courses-list-container');
     const playerContainer = document.querySelector('.video-player-container');
@@ -49,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderCourses(modules) {
         coursesContainer.innerHTML = '';
+        totalLessonsCount = 0; // Reset count
 
         modules.forEach(mod => {
             const moduleDiv = document.createElement('div');
@@ -62,13 +142,18 @@ document.addEventListener('DOMContentLoaded', () => {
             let lessonsHTML = '';
             if (mod.lessons) {
                 mod.lessons.forEach(lesson => {
-                    const icon = mod.status === 'locked' ? 'fa-lock' : (lesson.isLive ? 'fa-broadcast-tower' : 'fa-circle-play');
+                    totalLessonsCount++; // Count every lesson
+
+                    const isCompleted = userProfile && userProfile.completedLessons && userProfile.completedLessons.includes(lesson.id);
+                    const icon = mod.status === 'locked' ? 'fa-lock' : (isCompleted ? 'fa-circle-check' : (lesson.isLive ? 'fa-broadcast-tower' : 'fa-circle-play'));
+                    const iconColor = isCompleted ? '#10b981' : (lesson.isLive ? 'var(--live-red)' : '#3b82f6');
+
                     const lockedClass = mod.status === 'locked' ? 'locked' : '';
                     const liveIndicator = lesson.isLive ? `<span style="color:var(--live-red); font-size:0.7rem; margin-left:10px; font-weight:bold;">LIVE SESSION</span>` : '';
 
                     lessonsHTML += `
-                        <div class="lesson-item ${lockedClass}" onclick="playVideo('${lesson.videoUrl}', '${lesson.title}', ${mod.status === 'locked'})">
-                            <i class="fa-solid ${icon}"></i> ${lesson.title} ${liveIndicator}
+                        <div class="lesson-item ${lockedClass}" onclick="playVideo('${lesson.videoUrl}', '${lesson.title}', ${mod.status === 'locked'}, ${lesson.id}, '${mod.title.replace(/'/g, "\\'")}')">
+                            <i class="fa-solid ${icon}" style="color: ${iconColor}"></i> ${lesson.title} ${liveIndicator}
                             <span style="margin-left:auto; font-size:0.8rem; color:${lesson.isLive ? 'var(--live-red)' : '#999'};">${lesson.duration}</span>
                         </div>
                     `;
@@ -81,7 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h4>${mod.title}</h4>
                         ${liveBadgeHTML}
                     </div>
-                    <span class="badge ${badgeClass}">${badgeText}</span>
                 </div>
                 <div class="module-body">
                     ${lessonsHTML}
@@ -90,6 +174,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
             coursesContainer.appendChild(moduleDiv);
         });
+
+        updateProgressUI(); // Update stats after calculating totalLessonsCount
+        updateContinueLearningUI();
+    }
+
+    // --- PROGRESS TRACKING ---
+    let totalLessonsCount = 0;
+
+    function updateProgressUI() {
+        if (!userProfile) return;
+
+        const completed = userProfile.completedLessons || [];
+        const percent = totalLessonsCount > 0 ? Math.round((completed.length / totalLessonsCount) * 100) : 0;
+
+        // Update Overview Progress
+        const progressVal = document.querySelector('#view-overview .stat-val');
+        const progressFill = document.querySelector('#view-overview .fill');
+
+        if (progressVal) progressVal.innerText = `${percent}%`;
+        if (progressFill) progressFill.style.width = `${percent}%`;
     }
 
     // Helper to format YouTube URL
@@ -107,15 +211,75 @@ document.addEventListener('DOMContentLoaded', () => {
         return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
     }
 
+    // --- CONTINUE LEARNING LOGIC ---
+    function updateContinueLearningUI() {
+        if (!userProfile || !userProfile.lastWatched) {
+            // Default to first lesson if nothing watched
+            return;
+        }
+
+        const last = userProfile.lastWatched;
+        const contModule = document.getElementById('continue-module');
+        const contLesson = document.getElementById('continue-lesson');
+        const resumeBtn = document.getElementById('continue-resume-btn');
+
+        if (contModule) contModule.innerText = last.moduleTitle;
+        if (contLesson) contLesson.innerText = last.lessonTitle;
+
+        if (resumeBtn) {
+            resumeBtn.onclick = () => {
+                // 1. Switch to courses tab
+                const coursesTabBtn = document.querySelector('.nav-btn[data-tab="courses"]');
+                if (coursesTabBtn) coursesTabBtn.click();
+
+                // 2. Play the video
+                playVideo(last.url, last.lessonTitle, false, last.id, last.moduleTitle);
+
+                // 3. Ensure player is visible and scroll to it
+                setTimeout(() => {
+                    const player = document.querySelector('.video-player-container');
+                    if (player) {
+                        player.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 100);
+            };
+        }
+    }
+
     // Expose playVideo to global scope
-    window.playVideo = (url, title, isLocked) => {
+    let currentLessonId = null;
+    window.playVideo = (url, title, isLocked, lessonId, moduleTitle) => {
         if (isLocked) {
             alert('This module is locked. Complete previous modules first.');
             return;
         }
 
+        currentLessonId = lessonId;
+
+        // Save Last Watched
+        if (userProfile) {
+            userProfile.lastWatched = {
+                id: lessonId,
+                url: url,
+                lessonTitle: title,
+                moduleTitle: moduleTitle || 'Forex Training'
+            };
+            localStorage.setItem('currentUser', JSON.stringify(userProfile));
+            updateContinueLearningUI();
+        }
+
         playerContainer.style.display = 'block';
         const wrapper = document.querySelector('.video-wrapper');
+        const markBtn = document.getElementById('mark-complete-btn');
+
+        // Show/Hide mark complete button
+        if (markBtn) {
+            const isCompleted = userProfile && userProfile.completedLessons && userProfile.completedLessons.includes(lessonId);
+            markBtn.style.display = 'block';
+            markBtn.innerText = isCompleted ? 'Completed ✓' : 'Mark as Completed';
+            markBtn.disabled = isCompleted;
+            markBtn.style.opacity = isCompleted ? '0.6' : '1';
+        }
 
         // Output clean player
         if (url.includes('youtube.com') || url.includes('youtu.be')) {
@@ -132,6 +296,29 @@ document.addEventListener('DOMContentLoaded', () => {
         playerContainer.scrollIntoView({ behavior: 'smooth' });
     };
 
+    // Handle "Mark as Completed" button click
+    const markCompleteBtn = document.getElementById('mark-complete-btn');
+    if (markCompleteBtn) {
+        markCompleteBtn.addEventListener('click', () => {
+            if (!userProfile) return;
+            if (!userProfile.completedLessons) userProfile.completedLessons = [];
+
+            if (currentLessonId && !userProfile.completedLessons.includes(currentLessonId)) {
+                userProfile.completedLessons.push(currentLessonId);
+                localStorage.setItem('currentUser', JSON.stringify(userProfile));
+
+                markCompleteBtn.innerText = 'Completed ✓';
+                markCompleteBtn.disabled = true;
+                markCompleteBtn.style.opacity = '0.6';
+
+                updateProgressUI();
+
+                // Re-render courses to update checkmarks
+                loadCourses();
+            }
+        });
+    }
+
     // Initialize loading
     loadCourses();
 
@@ -147,7 +334,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const avatar = document.createElement('div');
         avatar.className = 'avatar-sm';
-        avatar.innerText = type === 'student' ? 'VS' : 'M';
+
+        if (type === 'student') {
+            const initials = userProfile ? userProfile.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : 'ST';
+            avatar.innerText = initials;
+        } else {
+            avatar.innerText = 'M';
+        }
 
         const bubble = document.createElement('div');
         bubble.className = 'bubble';

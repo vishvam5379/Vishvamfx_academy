@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn And Trade With Vishvam</title>
+    <title>Learn and Earn with Vishvam</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,7 +37,7 @@
             <li><a href="#funded">Funded Training</a></li>
             <li><a href="#about">About</a></li>
         </ul>
-        <a href="register.html" class="cta-btn secondary">Student Login</a>
+        <a href="register.html" class="cta-btn secondary">Student Login / Register</a>
     </nav>
 
     <!-- Hero Section -->
@@ -45,7 +45,7 @@
         <div class="hero-content">
             <div class="hero-badge">Trade With Confidence</div>
             <h1>Master the Art of <span class="text-gradient">Forex Trading</span></h1>
-            <p>From Basic definitions to Advanced institutional concepts. Get trained, get funded, and trade with our
+            <p>From Basic definitions to Advanced institutional concepts. Get trained, get funded, and trade with a
                 capital up to $200,000.</p>
             <div class="hero-btns">
                 <a href="#enroll" class="cta-btn primary">Start Your Journey</a>
@@ -122,7 +122,7 @@
                     <li><i class="fa-solid fa-check"></i> Risk Management</li>
                     <li><i class="fa-solid fa-check"></i> Psychology</li>
                 </ul>
-                <div class="price">$150</div>
+                <div class="price">15k rupees</div>
                 <span class="live-text">Not Recorded - Stay Engaged!</span>
                 <a href="#enroll" class="btn-link">Enroll Now</a>
             </div>
@@ -139,7 +139,7 @@
                     <li><i class="fa-solid fa-check"></i> Prop Firm Passing Live With Each Batch</li>
                     <li><i class="fa-solid fa-check"></i> Live Funded Accounts Passing and Taking Payouts</li>
                 </ul>
-                <div class="price">$200</div>
+                <div class="price">20k rupees</div>
                 <span class="live-text">Not Recorded - Stay Engaged!</span>
                 <a href="#enroll" class="btn-link">Enroll Now</a>
             </div>
@@ -200,19 +200,23 @@
         <div class="form-container">
             <h2>Join the Academy</h2>
             <p>Select your preferred path and we'll contact you.</p>
-            <form class="enroll-form" action="register.html">
+            <form class="enroll-form" id="enrollment-form">
                 <!-- Linking to existing register for functionality if needed, or simple alert -->
                 <div class="input-row">
-                    <input type="text" placeholder="Full Name" required>
-                    <input type="email" placeholder="Email Address" required>
+                    <input type="text" id="enroll-name" placeholder="Full Name" required>
+                    <input type="email" id="enroll-email" placeholder="Email Address" required>
                 </div>
-                <select>
-                    <option>Select Course Level</option>
-                    <option>Basics (Free)</option>
-                    <option>Technical Mastery ($199)</option>
-                    <option>Institutional & Funded ($499)</option>
+                <div class="input-row">
+                    <input type="password" id="enroll-password" placeholder="Create Password" required>
+                </div>
+                <select id="enroll-course-select" required>
+                    <option value="" disabled selected>Select Course Level</option>
+                    <option value="Forex Basics" data-price="0">Forex Basics (Free)</option>
+                    <option value="Technical Mastery" data-price="15000">Technical Mastery (15k rupees)</option>
+                    <option value="Technical Mastery + Live training" data-price="20000">Technical Mastery + Live
+                        training (20k rupees)</option>
                 </select>
-                <button type="submit" class="submit-btn">Proceed to Registration</button>
+                <button type="submit" class="submit-btn" id="enroll-submit-btn">Proceed to Payment</button>
             </form>
         </div>
     </section>
